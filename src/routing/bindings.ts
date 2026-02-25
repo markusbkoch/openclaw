@@ -88,23 +88,9 @@ export function resolveDefaultAgentBoundAccountId(
   cfg: OpenClawConfig,
   channelId: string,
 ): string | null {
-  const normalizedChannel = normalizeBindingChannelId(channelId);
-  if (!normalizedChannel) {
-    return null;
-  }
-  const defaultAgentId = normalizeAgentId(resolveDefaultAgentId(cfg));
-  for (const binding of listBindings(cfg)) {
-    const resolved = resolveNormalizedBindingMatch(binding);
-    if (
-      !resolved ||
-      resolved.channelId !== normalizedChannel ||
-      resolved.agentId !== defaultAgentId
-    ) {
-      continue;
-    }
-    return resolved.accountId;
-  }
-  return null;
+  // Delegate to resolveBoundAccountId using the repository default agent.
+  const defaultAgentId = resolveDefaultAgentId(cfg);
+  return resolveBoundAccountId(cfg, defaultAgentId, channelId);
 }
 
 export function buildChannelAccountBindings(cfg: OpenClawConfig) {
